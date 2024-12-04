@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    environment {
+        COMPOSE_FILE = 'docker-compose.yml'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo "Cloning the repository"
+                checkout scm // Récupère le code source
+            }
+        }
+
+        stage('Build and Test Backend') {
+            steps {
+                echo "Building and testing backend"
+                dir('backend') {
+                    sh './mvnw clean package -DskipTests=false'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                echo "Building Docker images"
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Run Docker Compose') {
+            steps {
+                echo "Starting services with Docker Compose"
+                sh 'docker-compose up -d'
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                echo "Running integration tests"
+                sh 'curl -f http://localhost:8080/api/messages || exit 1'
+                sh 'curl -f http://localhost:4200 || exit 1'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying using Ansible"
+                ansiblePlaybook credentialsId: 'ansible-ssh-key',
+                                inventory: 'ansible/inventory.ini',
+                                playbook: 'ansible/deploy.yml'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed. Please check the logs."
+            sh 'docker-compose down'
+        }
+        always {
+            echo "Cleaning up Docker containers"
+            sh 'docker-compose down'
+        }
+    }
+}
