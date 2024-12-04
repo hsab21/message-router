@@ -1,0 +1,19 @@
+<div>
+  <h2>Messages</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Content</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let message of messages">
+        <td>{{ message.id }}</td>
+        <td>{{ message.content }}</td>
+        <td>{{ message.timestamp }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

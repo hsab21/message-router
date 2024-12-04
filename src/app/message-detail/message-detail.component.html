@@ -1,0 +1,6 @@
+<mat-dialog-content *ngIf="message">
+  <p>ID: {{message.id}}</p>
+  <p>Content: {{message.content}}</p>
+  <p>Timestamp: {{message.timestamp}}</p>
+</mat-dialog-content>
+<button mat-button routerLink="/messages">Cancel</button>
