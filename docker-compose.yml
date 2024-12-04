@@ -1,0 +1,16 @@
+version: '3'
+services:
+  message-router-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - h2-database
+
+  h2-database:
+    image: h2database/h2database
+    ports:
+      - "1521:1521"
+      - "81:81"  # H2 Web Console
+    environment:
+      - H2_OPTIONS=-ifNotExists
