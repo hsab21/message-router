@@ -1,5 +1,5 @@
 # Étape 1 : Utilisation d'une image JDK
-FROM openjdk:17-jdk-slim as builder
+FROM openjdk:25-jdk-slim as builder
 
 # Étape 2 : Copier le fichier jar de l'application
 WORKDIR /app
